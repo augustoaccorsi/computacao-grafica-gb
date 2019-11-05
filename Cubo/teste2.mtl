@@ -1,0 +1,8 @@
+newmtl container    
+
+Ka 0.50 0.50 0.50
+Kd 1.00 1.00 1.00
+
+map_Kd C:\Users\i851169\source\repos\guto\computacao-grafica\Cubo\mesa01.bmp
+Ks 1.00 1.00 1.00
+Ns 300  

@@ -1,0 +1,9 @@
+#
+# Warrior .mtl
+#
+newmtl container
+Ka 0.500000 0.500000 0.500000
+Kd 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ns 300.000000
+map_Kd container.jpg
