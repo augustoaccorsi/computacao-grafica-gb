@@ -15,11 +15,11 @@ O projeto consiste em um modelador de pistas e um visualizador de pistas de corr
 
 |              Ações do Usuário              |
 |--------------------------------------------|
-| Mouse | Movimentação da câmera             |
-| →     | Rotaciona a câmera para a direita  |
-| ←     | Rotaciona a câmera para a esquerda |
-| ↑     | Zoom in                            |
-| ↓     | Zoom out                           |
+| Mouse - Movimentação da câmera             |
+| →     - Rotaciona a câmera para a direita  |
+| ←     - Rotaciona a câmera para a esquerda |
+| ↑     - Zoom in                            |
+| ↓     - Zoom out                           |
 
 
 Projeto inicial: [Sabertooth](https://github.com/RafaelFreita/Sabertooth)
