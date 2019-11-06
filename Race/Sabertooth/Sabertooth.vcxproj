@@ -76,11 +76,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../External/GLFW/include;../External/GLEW/include;../External/SOIL2/include;../External/glut/include;../External/glm;../External/STBIMG;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../External/GLFW/include;../../External/GLEW/include;../../External/SOIL2/include;../../External/glut/include;../../External/glm;../../External/STBIMG;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>../External/SOIL2/lib;../External/glut/lib;../External/glfw/lib-vc2015;../External/glew/lib/Release/Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../External/SOIL2/lib;../../External/glut/lib;../../External/glfw/lib-vc2015;../../External/glew/lib/Release/Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32s.lib;glut32.lib;soil2-debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
