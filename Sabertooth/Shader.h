@@ -1,30 +1,21 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <GL\glew.h>
-
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <iostream>
 
-#include <map>
-
-#include "Texture.h"
-
+#include <GL\glew.h>
 
 class Shader
 {
 public:
 	GLuint program;
-	std::map<std::string, Texture> textures;
-	GLint textureQtd;
+
 
 public:
-	Shader() { textureQtd = 0; }
-	~Shader();
-
-	Shader( const GLchar* vertexPath, const GLchar* fragmentPath ) : Shader() {
+	Shader(const GLchar* vertexPath, const GLchar* fragmentPath) {
 
 		// Get vertex and fragment shaders source codes from files' paths
 		std::string vertexCode;
@@ -38,18 +29,11 @@ public:
 
 		try
 		{
-			vertexShaderFile.open( vertexPath );
-			if ( !vertexShaderFile.is_open() ){
-				std::cout << "ERROR::SHADER::VERTEX_SHADER_PATH" << std::endl;
-			}
-
-			fragmentShaderFile.open( fragmentPath );
-			if ( !fragmentShaderFile.is_open() ){
-				std::cout << "ERROR::SHADER::FRAGMENT_SHADER_PATH" << std::endl;
-			}
+			vertexShaderFile.open(vertexPath);
+			fragmentShaderFile.open(fragmentPath);
 
 			std::stringstream vShaderStream, fShaderStream;
-
+			
 			// Read files' contents into streams
 			vShaderStream << vertexShaderFile.rdbuf();
 			fShaderStream << fragmentShaderFile.rdbuf();
@@ -61,9 +45,9 @@ public:
 			fragmentCode = fShaderStream.str();
 
 		}
-		catch ( const std::ifstream::failure e )
+		catch (const std::ifstream::failure e )
 		{
-			std::cout << "ERROR::SHADER::FILE NOT SUCCESUFULLY READ" << std::endl;
+			std::cout << "ERROR::SHADER::FILE_NOT_SUCCESUFULLY READ" << std::endl;
 		}
 
 		const GLchar *vShaderCode = vertexCode.c_str();
@@ -103,9 +87,9 @@ public:
 
 		// Shader Program
 		this->program = glCreateProgram();
-		glAttachShader( this->program, vertex );
+		glAttachShader( this->program, vertex);
 		glAttachShader( this->program, fragment );
-		glLinkProgram( this->program );
+		glLinkProgram(  this->program );
 
 		// Print Linking errors if there any
 		glGetProgramiv( this->program, GL_LINK_STATUS, &success );
@@ -125,13 +109,6 @@ public:
 	{
 		glUseProgram( this->program );
 	}
-
-	void Delete() {
-		glDeleteProgram( this->program );
-	}
-
-	void UseTexture( std::string textureName );
-	void LoadTexture( char* path, char* textureUniformName, std::string textureName );
 
 };
 
