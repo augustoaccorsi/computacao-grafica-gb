@@ -1,21 +1,15 @@
-# Sabertoooth
+# Modelador de Pistas de Corrida e Visualizador de Modelos 3D 
 
-This is a repo for studying purposes only.
+Projeto do Grau B da cadeira de Computação Gráfica da Universidade do Vale do Rio dos Sinos
 
-## General Information
+## Informações gerais
 
-Contains a base project using OpenGL, GLEW and GLFW to build projects upon.
+O projeto consiste em um modelador de pistas e um visualizador de pistas de corrida
 
-SOIL and GLM, as well as a class for Shader compiling, are already included.
+## Instruções
 
-## Instructions
+1. Execute o projeto [Curves](https://github.com/augustoaccorsi/computacao-grafica-gb/tree/master/Curves)
+2. Copie os arquivos de sua saída `Debug/` para o [diretório principal](https://github.com/augustoaccorsi/computacao-grafica-gb/tree/master/Race/Sabertooth) do projeto Race
+3. Execute o projeto [Race](https://github.com/augustoaccorsi/computacao-grafica-gb/tree/master/Race)
 
-1. Open Visual Studio
-2. Click on "Open Project/Solution"
-3. Go to the folder where you downloaded this project
-4. Select "Sabertooth.sln"
-
-### Windows SDK error
-
-1. Under "Solution Explorer", right-click the solution and select "Retarget Solution"
-2. Select your Windows SDK
+Projeto inicial: [Sabertooth](https://github.com/RafaelFreita/Sabertooth)
