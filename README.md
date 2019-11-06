@@ -13,13 +13,13 @@ O projeto consiste em um modelador de pistas e um visualizador de pistas de corr
 3. Execute o projeto [Race](https://github.com/augustoaccorsi/computacao-grafica-gb/tree/master/Race)
 
 
-|          Ações do Usuário                      |
-|------------------------------------------------|
-| Rotação do mouse - Movimentação da câmera      |
-| → - rotaciona a câmera para a direita          |
-| ← - rotaciona a câmera para a esquerda         |
-| ↑ - move câmera para frente                    |
-| ↓ - move câmera para trás                      |
+|              Ações do Usuário              |
+|--------------------------------------------|
+| Mouse | Movimentação da câmera             |
+| →     | Rotaciona a câmera para a direita  |
+| ←     | Rotaciona a câmera para a esquerda |
+| ↑     | Zoom in                            |
+| ↓     | Zoom out                           |
 
 
 Projeto inicial: [Sabertooth](https://github.com/RafaelFreita/Sabertooth)
