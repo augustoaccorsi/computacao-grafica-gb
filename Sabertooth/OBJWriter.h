@@ -1,11 +1,5 @@
 #pragma once
-#include <stdio.h>
-#include <stdlib.h>
-#include <iostream>
-#include <string>
-#include <vector>
-#include <fstream>
-#include <sstream>
+#include "Includes.h"
 
 #ifndef OBJWRITER_H
 #define OBJWRITER_H

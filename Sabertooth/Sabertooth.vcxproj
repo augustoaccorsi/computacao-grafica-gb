@@ -136,6 +136,7 @@
     <None Include="Shaders\Core\core.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Includes.h" />
     <ClInclude Include="MTLWriter.h" />
     <ClInclude Include="OBJWriter.h" />
     <ClInclude Include="Shader.h" />

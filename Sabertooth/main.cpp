@@ -1,21 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <iostream>
-#include <string>
-#include <vector>
-#include <fstream>
-#include <sstream>
-#define GLEW_STATIC
-#include <GL\glew.h>
-#include <GLFW\glfw3.h>
-#include <glm.hpp>
-#include <gtc\matrix_transform.hpp>
-#include <gtc\type_ptr.hpp>
-#include <vec2.hpp>
-#include "Shader.h"
-#include "MTLWriter.h"
-#include "TXTWriter.h"
-#include "OBJWriter.h"
+#include "Includes.h"
 
 // definindo valor de pi
 #define PI  3.14159265359
