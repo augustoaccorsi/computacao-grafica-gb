@@ -58,7 +58,7 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-	GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Curve generator", nullptr, nullptr);
+	GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Curva", nullptr, nullptr);
 
 	int screenWidth, screenHeight;
 	glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
@@ -105,7 +105,7 @@ int main() {
 	while (!glfwWindowShouldClose(window)) {
 
 		// limpando a cor do buffer
-		glClearColor(0.6f, 0.6f, 0.6f, 1.0f);
+		glClearColor(0.2f, 0.5f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 		// gl esperando eventos
 		glfwPollEvents();
@@ -322,7 +322,7 @@ vector<glm::vec3*>* gerarCurva(vector<glm::vec3*>* points) {
 
 			// adiciona cor branca para a curva
 
-			curvaCalculada->push_back(new glm::vec3(1.0, 0.0, 1.0));
+			curvaCalculada->push_back(new glm::vec3(0.0, 0.1, 1.0));
 
 		}	
 	}
@@ -386,7 +386,7 @@ vector<glm::vec3*>* gerarCurvaExternaInterna(vector<glm::vec3*>* points, bool ex
 		OBJWriter.addPointsFinalCurve(pontosGerados->x, pontosGerados->y, pontosGerados->z);
 		
 		// adiciona cor branca para curva
-		calculatedCurve->push_back(new glm::vec3(1.0, 0.0, 1.0)); 
+		calculatedCurve->push_back(new glm::vec3(0.0, 0.1, 1.0)); 
 
 	}
 	return calculatedCurve;
