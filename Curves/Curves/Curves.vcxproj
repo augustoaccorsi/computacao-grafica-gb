@@ -22,7 +22,7 @@
     <ProjectGuid>{EF584987-9C37-48F1-91F9-B4DB96AB1EBF}</ProjectGuid>
     <RootNamespace>Sabertooth</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Sabertooth</ProjectName>
+    <ProjectName>Curves</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
