@@ -16,7 +16,7 @@ public:
 	}
 
 	void createTXTFile() {
-		TXTFile.open("originalCurve.txt");
+		TXTFile.open("pistaOriginal.txt");
 	}
 
 	void addPoint(float x, float y, float z){	

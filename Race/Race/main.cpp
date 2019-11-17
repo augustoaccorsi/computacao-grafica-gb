@@ -17,6 +17,11 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
+void ReadMTLFilesToMeshes(std::vector<Mesh*>* meshVec);
+void PrintMaterialListForObjs(std::vector<Mesh*>* meshVec);
+void AssignMaterialsToGroups(std::vector<Mesh*>* meshVec, Shader* coreShader);
+void BindAllMeshes(std::vector<Mesh*>* meshVec);
+void InitializeMeshes(std::vector<Mesh*>* meshVec);
 void lerArqCurva(const GLchar* path);
 void ajustarTamanhoCurva(std::vector<glm::vec3*>* points, float factor);
 float calcularAnguloOBJ(int indexA, int indexB);
@@ -52,7 +57,7 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-	GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "OBJ Reader", nullptr, nullptr);
+	GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Corrida", nullptr, nullptr);
 
 	int screenWidth, screenHeight;
 	glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
@@ -88,54 +93,20 @@ int main() {
 	Shader *coreShader = new Shader("Shaders/Core/core.vert", "Shaders/Core/core.frag");
 	coreShader->Use();
 
-	lerArqCurva("originalCurve.txt");
+	lerArqCurva("pistaOriginal.txt");
 	ajustarTamanhoCurva(pontosCurva, tamanhoCurva);
 
 	std::vector<Mesh*>* meshVec = new std::vector<Mesh*>();
-	std::string objs = "bmw.obj curve.obj end";
-	istringstream ss(objs);
-	string temp;
-	ss >> temp;
-	while (temp != "end") {
-		meshVec->push_back(OBJReader::Read(temp.c_str()));
-		ss >> temp;
-	}
 
-	for (std::vector<Mesh*>::iterator obj = meshVec->begin(); obj != meshVec->end(); ++obj) {
-		// Read MTL files to the meshes
-		(*obj)->setMaterials(MTLReader::read((*obj)->GetMeterialFile(), textureNum));
-	}
+	InitializeMeshes(meshVec);
 
-	for (std::vector<Mesh*>::iterator obj = meshVec->begin(); obj != meshVec->end(); ++obj) {
-		// Print material list for all objs
-		std::vector<Material*> *tempMats = (*obj)->GetMaterials();
-		for (std::vector<Material*>::iterator mat = tempMats->begin(); mat != tempMats->end(); ++mat) {
-			std::cout << (*mat)->GetName() << std::endl;
-		}
-	}
+	ReadMTLFilesToMeshes(meshVec);
 
-	// Assign materials to the groups within the meshes
-	for (std::vector<Mesh*>::iterator obj = meshVec->begin(); obj != meshVec->end(); ++obj) {
+	PrintMaterialListForObjs(meshVec);
 
-		std::vector<Group*> *tempGroups = (*obj)->GetGroups();
-		std::vector<Material*> *tempMaterials = (*obj)->GetMaterials();
-		std::string name;
-		// Iterate through the groups and add the materials to them
-		for (std::vector<Group*>::iterator it = tempGroups->begin(); it != tempGroups->end(); ++it) {
-			// Set shader on the group
-			(*it)->SetShader(coreShader);
-			for (std::vector<Material*>::iterator itMaterial = tempMaterials->begin(); itMaterial != tempMaterials->end(); ++itMaterial) {
-				if ((*it)->GetMaterialName() == (*itMaterial)->GetName()) {
-					Material *newMat = new Material((*itMaterial)->GetName());
-					(*it)->SetMaterial((*itMaterial));
-				}
-			}
-		}
-	}
-	// Bind all the meshes
-	for (std::vector<Mesh*>::iterator obj = meshVec->begin(); obj != meshVec->end(); ++obj) {
-		(*obj)->Bind();
-	}
+	AssignMaterialsToGroups(meshVec, coreShader);
+
+	BindAllMeshes(meshVec);
 
 	glm::mat4 projection(1);
 	projection = glm::perspective(glm::radians(camera.Zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
@@ -219,6 +190,67 @@ int main() {
 	coreShader->Delete();
 	glfwTerminate();
 	return EXIT_SUCCESS;
+}
+
+void InitializeMeshes(std::vector<Mesh*>* meshVec)
+{
+	std::string objs = "bmw.obj pista.obj end";
+	istringstream ss(objs);
+	string temp;
+	ss >> temp;
+	while (temp != "end") {
+		meshVec->push_back(OBJReader::Read(temp.c_str()));
+		ss >> temp;
+	}
+}
+
+void BindAllMeshes(std::vector<Mesh*>* meshVec)
+{
+	// Bind all the meshes
+	for (std::vector<Mesh*>::iterator obj = meshVec->begin(); obj != meshVec->end(); ++obj) {
+		(*obj)->Bind();
+	}
+}
+
+void AssignMaterialsToGroups(std::vector<Mesh*>* meshVec, Shader* coreShader)
+{
+	// Assign materials to the groups within the meshes
+	for (std::vector<Mesh*>::iterator obj = meshVec->begin(); obj != meshVec->end(); ++obj) {
+
+		std::vector<Group*>* tempGroups = (*obj)->GetGroups();
+		std::vector<Material*>* tempMaterials = (*obj)->GetMaterials();
+		std::string name;
+		// Iterate through the groups and add the materials to them
+		for (std::vector<Group*>::iterator it = tempGroups->begin(); it != tempGroups->end(); ++it) {
+			// Set shader on the group
+			(*it)->SetShader(coreShader);
+			for (std::vector<Material*>::iterator itMaterial = tempMaterials->begin(); itMaterial != tempMaterials->end(); ++itMaterial) {
+				if ((*it)->GetMaterialName() == (*itMaterial)->GetName()) {
+					Material* newMat = new Material((*itMaterial)->GetName());
+					(*it)->SetMaterial((*itMaterial));
+				}
+			}
+		}
+	}
+}
+
+void PrintMaterialListForObjs(std::vector<Mesh*>* meshVec)
+{
+	for (std::vector<Mesh*>::iterator obj = meshVec->begin(); obj != meshVec->end(); ++obj) {
+		// Print material list for all objs
+		std::vector<Material*>* tempMats = (*obj)->GetMaterials();
+		for (std::vector<Material*>::iterator mat = tempMats->begin(); mat != tempMats->end(); ++mat) {
+			std::cout << (*mat)->GetName() << std::endl;
+		}
+	}
+}
+
+void ReadMTLFilesToMeshes(std::vector<Mesh*>* meshVec)
+{
+	for (std::vector<Mesh*>::iterator obj = meshVec->begin(); obj != meshVec->end(); ++obj) {
+		// Read MTL files to the meshes
+		(*obj)->setMaterials(MTLReader::read((*obj)->GetMaterialFile(), textureNum));
+	}
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
