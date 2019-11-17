@@ -39,6 +39,7 @@ GLuint vao, vbo;
 
 // declarando nomes de metodos
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+void SetCoordinatesByZone(double& xpos, double& ypos);
 void convertCoordinates(double& x, double& y);
 int getZone(float x, float y);
 vector<glm::vec3*>* gerarCurva(vector<glm::vec3*>* points);
@@ -219,24 +220,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		cout << "x = " << xpos << endl;
 		cout << "y = " << ypos << endl;
 
-		// arrendodamento de curva, aumentando um pouco a curva
-		int zone = getZone(xpos, ypos);
-		if (zone == 1) {
-			xpos += 0.5;
-			ypos += 0.5;
-		}
-		else if (zone == 2) {
-			xpos -= 0.5;
-			ypos += 0.5;
-		}
-		else if (zone == 3) {
-			xpos -= 0.5;
-			ypos -= 0.5;
-		}
-		else if (zone == 4) {
-			xpos += 0.5;
-			ypos -= 0.5;
-		}
+		SetCoordinatesByZone(xpos, ypos);
 	}
 	// quando clicar no botao direito, terminar e finalizar a curva
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
@@ -265,6 +249,28 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	}
+}
+
+void SetCoordinatesByZone(double& xpos, double& ypos)
+{
+	// arrendodamento de curva, aumentando um pouco a curva
+	int zone = getZone(xpos, ypos);
+	if (zone == 1) {
+		xpos += 0.5;
+		ypos += 0.5;
+	}
+	else if (zone == 2) {
+		xpos -= 0.5;
+		ypos += 0.5;
+	}
+	else if (zone == 3) {
+		xpos -= 0.5;
+		ypos -= 0.5;
+	}
+	else if (zone == 4) {
+		xpos += 0.5;
+		ypos -= 0.5;
 	}
 }
 
