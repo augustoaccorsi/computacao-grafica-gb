@@ -26,14 +26,14 @@ public:
 	void AddNormal(glm::vec3 normal);
 	void AddMapping(glm::vec2 mapping);
 
-	void setMaterialFile(std::string mat) {	material_file = mat;}
+	void setMaterialFile(std::string mat) {	materialFile = mat;}
 	void setMaterials(std::vector<Material*>* material) { materials = material; }
 	std::vector<Material*>* GetMaterials() { return materials; }
 
 	std::vector<glm::vec3*>* GetVertexes() { return vertexes; }
 	std::vector<glm::vec3*>* GetNormals() { return normals; }
 	std::vector<glm::vec2*>* GetMappings() { return mappings; }
-	std::string GetMeterialFile() { return material_file; }
+	std::string GetMaterialFile() { return materialFile; }
 	std::vector<Group*>* GetGroups() { return groups; }
 
 	void Bind();
@@ -43,7 +43,7 @@ private:
 	std::vector<glm::vec3*>* vertexes;
 	std::vector<glm::vec3*>* normals;
 	std::vector<glm::vec2*>* mappings;
-	std::string material_file;
+	std::string materialFile;
 
 	std::vector<Group*>* groups;
 	std::vector<Material*>* materials;
