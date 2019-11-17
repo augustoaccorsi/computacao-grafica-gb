@@ -49,8 +49,6 @@ vector<GLfloat>* convertToFloat(std::vector<glm::vec3*>* points);
 
 int main() {
 
-	////////////////////////////// adicionando configuracoes para a janela
-
 	glfwInit();
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -117,7 +115,7 @@ int main() {
 		}
 
 		// enquanto ainda estiver desenhando
-		if (draw == true) {
+		if (draw) {
 			// vai dando bind no vao
 			glBindVertexArray(vao);
 			// e desenhando os triangulos, porem enviando para o vetor de pontos finais
@@ -248,7 +246,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		curvaExterna = gerarCurvaExternaInterna(curvaOriginal, true);
 		curvaInterna = gerarCurvaExternaInterna(curvaOriginal, false);
 
-		// tamanho do arrya dividido por 2 - porque a metade desses valores e cor branca
+		// tamanho do array dividido por 2 - porque a metade desses valores e cor branca
 
 		tamanhoCurvaExterna = curvaExterna->size() / 2.0;
 		tamanhoCurvaInterna = curvaInterna->size() / 2.0;
