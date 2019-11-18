@@ -9,7 +9,7 @@ O projeto consiste em um modelador de pistas e um visualizador de pistas de corr
 ## Instruções
 
 1. Execute o projeto [Curves](https://github.com/augustoaccorsi/computacao-grafica-gb/tree/master/Curves)
-2. Copie os arquivos de sua saída `Debug/` para o [diretório principal](https://github.com/augustoaccorsi/computacao-grafica-gb/tree/master/Race/Sabertooth) do projeto Race
+2. Copie os arquivos de sua saída `Debug/` para o [diretório principal](https://github.com/augustoaccorsi/computacao-grafica-gb/tree/master/Race/Race) do projeto Race
 3. Execute o projeto [Race](https://github.com/augustoaccorsi/computacao-grafica-gb/tree/master/Race)
 
 
