@@ -14,36 +14,33 @@
 #include "Time.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void processInput(GLFWwindow *window);
+void MouseCallback(GLFWwindow* window, double xpos, double ypos);
+void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+void ProcessInput(GLFWwindow *window);
 void ReadMTLFilesToMeshes(std::vector<Mesh*>* meshVec);
 void PrintMaterialListForObjs(std::vector<Mesh*>* meshVec);
 void AssignMaterialsToGroups(std::vector<Mesh*>* meshVec, Shader* coreShader);
 void BindAllMeshes(std::vector<Mesh*>* meshVec);
 void InitializeMeshes(std::vector<Mesh*>* meshVec);
-void lerArqCurva(const GLchar* path);
-void ajustarTamanhoCurva(std::vector<glm::vec3*>* points, float factor);
-float calcularAnguloOBJ(int indexA, int indexB);
+void LerArquivoCurva(const GLchar* path);
+void AjustarTamanhoCurva(std::vector<glm::vec3*>* points, float factor);
+float CalcularAnguloOBJ(int indexA, int indexB);
 
 int textureNum = 0;
-//Tamanho da curva
+
 float tamanhoCurva = 20.0f;
 
 std::vector<glm::vec3*>* pontosCurva = new std::vector<glm::vec3*>();
 std::vector<glm::vec3*>* scaledCurvePoints = new std::vector<glm::vec3*>();
 
-//screen
 const GLint WIDTH = 1000, HEIGHT = 800;
 
-// camera
 Camera camera(glm::vec3(0.0f, 10.0f, 30.0f));
 float lastX = WIDTH / 2.0f;
 float lastY = HEIGHT / 2.0f;
 bool firstMouse = true;
 
-// timing
-float deltaTime = 0.0f;	// time between current frame and last frame
+float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 glm::vec3 lightPos(0.0f, 0.0f, 3.0f);
@@ -78,8 +75,8 @@ int main() {
 
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetScrollCallback(window, scroll_callback);
+	glfwSetCursorPosCallback(window, MouseCallback);
+	glfwSetScrollCallback(window, ScrollCallback);
 
 	glViewport(0, 0, screenWidth, screenHeight);
 
@@ -93,8 +90,8 @@ int main() {
 	Shader *coreShader = new Shader("Shaders/Core/core.vert", "Shaders/Core/core.frag");
 	coreShader->Use();
 
-	lerArqCurva("pistaOriginal.txt");
-	ajustarTamanhoCurva(pontosCurva, tamanhoCurva);
+	LerArquivoCurva("pistaOriginal.txt");
+	AjustarTamanhoCurva(pontosCurva, tamanhoCurva);
 
 	std::vector<Mesh*>* meshVec = new std::vector<Mesh*>();
 
@@ -120,7 +117,7 @@ int main() {
 		lastFrame = currentFrame;
 
 		glfwPollEvents();
-		processInput(window);
+		ProcessInput(window);
 
 		glClearColor(0.2f, 0.5f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -147,11 +144,9 @@ int main() {
 
 		std::vector<Group*>* currentGroups = nullptr;
 
-		//iterate through the different meshes
 		for (std::vector<Mesh*>::iterator obj = meshVec->begin(); obj != meshVec->end(); ++obj) {
 			currentGroups = (*obj)->GetGroups();
 
-			// Iterare through groups
 			for (std::vector<Group*>::iterator group = currentGroups->begin(); group != currentGroups->end(); ++group) {
 				if ((*group)->GetType() != GroupType::EMPTY && (*group)->GetType() != GroupType::NONE) {
 					glBindVertexArray((*group)->VAO());
@@ -171,8 +166,8 @@ int main() {
 						}
 						else {
 							glm::mat4 transform = glm::translate(model, glm::vec3(pontosCurva->at(movementIndex)->x, pontosCurva->at(movementIndex)->y, pontosCurva->at(movementIndex)->z));
-							angle = -calcularAnguloOBJ(movementIndex, movementIndex + 5);
-							angle += 6.2; // Add 90º to fix initial direction from the motocycle							
+							angle = -CalcularAnguloOBJ(movementIndex, movementIndex + 5);
+							angle += 6.2; // Ajuste do direcionamento.							
 							transform = glm::rotate(transform, angle, glm::vec3(0, 1, 0));
 							glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(transform));
 						}
@@ -206,7 +201,6 @@ void InitializeMeshes(std::vector<Mesh*>* meshVec)
 
 void BindAllMeshes(std::vector<Mesh*>* meshVec)
 {
-	// Bind all the meshes
 	for (std::vector<Mesh*>::iterator obj = meshVec->begin(); obj != meshVec->end(); ++obj) {
 		(*obj)->Bind();
 	}
@@ -214,15 +208,14 @@ void BindAllMeshes(std::vector<Mesh*>* meshVec)
 
 void AssignMaterialsToGroups(std::vector<Mesh*>* meshVec, Shader* coreShader)
 {
-	// Assign materials to the groups within the meshes
 	for (std::vector<Mesh*>::iterator obj = meshVec->begin(); obj != meshVec->end(); ++obj) {
 
 		std::vector<Group*>* tempGroups = (*obj)->GetGroups();
 		std::vector<Material*>* tempMaterials = (*obj)->GetMaterials();
 		std::string name;
-		// Iterate through the groups and add the materials to them
+
 		for (std::vector<Group*>::iterator it = tempGroups->begin(); it != tempGroups->end(); ++it) {
-			// Set shader on the group
+
 			(*it)->SetShader(coreShader);
 			for (std::vector<Material*>::iterator itMaterial = tempMaterials->begin(); itMaterial != tempMaterials->end(); ++itMaterial) {
 				if ((*it)->GetMaterialName() == (*itMaterial)->GetName()) {
@@ -237,7 +230,7 @@ void AssignMaterialsToGroups(std::vector<Mesh*>* meshVec, Shader* coreShader)
 void PrintMaterialListForObjs(std::vector<Mesh*>* meshVec)
 {
 	for (std::vector<Mesh*>::iterator obj = meshVec->begin(); obj != meshVec->end(); ++obj) {
-		// Print material list for all objs
+
 		std::vector<Material*>* tempMats = (*obj)->GetMaterials();
 		for (std::vector<Material*>::iterator mat = tempMats->begin(); mat != tempMats->end(); ++mat) {
 			std::cout << (*mat)->GetName() << std::endl;
@@ -248,14 +241,12 @@ void PrintMaterialListForObjs(std::vector<Mesh*>* meshVec)
 void ReadMTLFilesToMeshes(std::vector<Mesh*>* meshVec)
 {
 	for (std::vector<Mesh*>::iterator obj = meshVec->begin(); obj != meshVec->end(); ++obj) {
-		// Read MTL files to the meshes
+
 		(*obj)->setMaterials(MTLReader::read((*obj)->GetMaterialFile(), textureNum));
 	}
 }
 
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window)
+void ProcessInput(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
@@ -270,18 +261,12 @@ void processInput(GLFWwindow *window)
 		camera.ProcessKeyboard(RIGHT, deltaTime);
 }
 
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-	// make sure the viewport matches the new window dimensions; note that width and 
-	// height will be significantly larger than specified on retina displays.
 	glViewport(0, 0, width, height);
 }
 
-// glfw: whenever the mouse moves, this callback is called
-// -------------------------------------------------------
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+void MouseCallback(GLFWwindow* window, double xpos, double ypos)
 {
 	if (firstMouse)
 	{
@@ -291,7 +276,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	}
 
 	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+	float yoffset = lastY - ypos;
 
 	lastX = xpos;
 	lastY = ypos;
@@ -299,21 +284,19 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
-// glfw: whenever the mouse scroll wheel scrolls, this callback is called
-// ----------------------------------------------------------------------
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	camera.ProcessMouseScroll(yoffset);
 }
 
-void ajustarTamanhoCurva(std::vector<glm::vec3*>* points, float factor) {
+void AjustarTamanhoCurva(std::vector<glm::vec3*>* points, float factor) {
 	for (int i = 0; i < points->size(); i++) {
 		scaledCurvePoints->push_back(new glm::vec3(points->at(i)->x*factor, points->at(i)->y, points->at(i)->z*factor));
 	}
 	pontosCurva = scaledCurvePoints;
 }
 
-void lerArqCurva(const GLchar* path) {
+void LerArquivoCurva(const GLchar* path) {
 
 	std::ifstream file;
 	file.exceptions(std::ifstream::badbit);
@@ -334,10 +317,8 @@ void lerArqCurva(const GLchar* path) {
 			sstream = std::stringstream();
 			line = temp = "";
 
-			//get first line of the file
 			std::getline(file, line);
 
-			//get content of the line
 			sstream << line;
 			sstream >> temp;
 
@@ -357,7 +338,7 @@ void lerArqCurva(const GLchar* path) {
 	}
 }
 
-float calcularAnguloOBJ(int indexA, int indexB) {
+float CalcularAnguloOBJ(int indexA, int indexB) {
 
 	glm::vec3* a = pontosCurva->at(indexA);
 	glm::vec3* b;

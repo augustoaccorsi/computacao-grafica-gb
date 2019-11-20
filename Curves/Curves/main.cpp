@@ -1,52 +1,37 @@
 #include "Includes.h"
 
-// definindo valor de pi
 #define PI  3.14159265359
-// definindo valor de metade de pi
 #define HALF_PI PI/2.0
 
-// configurando namespace
 using namespace std;
 
-// configurando tamanho da tela
+// Tamanho da tela
 const GLint WIDTH = 1200, HEIGHT = 900;
 
-// gerando vetores que vamos utilizar
-// pontos selecionados
-
 vector<glm::vec3*>* pontosSelecionados = new vector<glm::vec3*>();
-// a curva inteira original
 vector<glm::vec3*>* curvaOriginal = new vector<glm::vec3*>();
-// a curva externa gerada
 vector<glm::vec3*>* curvaExterna = new vector<glm::vec3*>();
-// a curva interna gerada
 vector<glm::vec3*>* curvaInterna = new vector<glm::vec3*>();
-// pontos finais da curva 
 vector<glm::vec3*>* pontosFinais = new vector<glm::vec3*>();
-// pontos final em GLfloat
 vector<GLfloat>* pontosFinaisFloat = new vector<GLfloat>();
 
-// tamanho da curva interna
 int tamanhoCurvaInterna = 0;
-// tamanho da curva externa
 int tamanhoCurvaExterna = 0;
 
-// quantidade de faces
 int faces = 0;
 
 bool draw = false;
 GLuint vao, vbo;
 
-// declarando nomes de metodos
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 void SetCoordinatesByZone(double& xpos, double& ypos);
-void convertCoordinates(double& x, double& y);
-int getZone(float x, float y);
+void ConvertCoordinates(double& x, double& y);
+int GetZone(float x, float y);
 vector<glm::vec3*>* gerarCurva(vector<glm::vec3*>* points);
 void CalcularBSpline(std::vector<glm::vec3*>* temp, std::vector<glm::vec3*>* curvaCalculada, TXTWriter& TXTWriter);
-vector<glm::vec3*>* gerarCurvaExternaInterna(vector<glm::vec3*>* points, bool external);
+vector<glm::vec3*>* GerarCurva(vector<glm::vec3*>* points, bool external);
 vector<glm::vec3*>* gerarCurvaFinal(vector<glm::vec3*>* internalCurve, vector<glm::vec3*>* externalCurve);
-vector<GLfloat>* convertToFloat(std::vector<glm::vec3*>* points);
+vector<GLfloat>* ConvertToFloat(std::vector<glm::vec3*>* points);
 
 int main() {
 
@@ -77,50 +62,38 @@ int main() {
 		return EXIT_FAILURE;
 	}
 
-	// inicializando a janela
 	glViewport(0, 0, screenWidth, screenHeight);
 
-	// configurando shader
 	Shader coreShader("Shaders/Core/core.vert", "Shaders/Core/core.frag");
 	coreShader.Use();
 
-	// configurando vao e vbo
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
 	glfwMakeContextCurrent(window);
-	// configurando funcao para pegar o click do mouse
+
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
 
-	// gerando objeto de writer de mtl
 	MTLWriter MTLWriter;
-	// criando arquivo para adicionar os pontos mtl
 	MTLWriter.createMtlFile();
 
-	// gerando objeto de writer 
 	OBJWriter OBJWriter;
-	// criando arquivo para adicionar os pontos
 	OBJWriter.createOBJFile();
 
-	// while para controle de janela
 	while (!glfwWindowShouldClose(window)) {
 
-		// limpando a cor do buffer
 		glClearColor(0.2f, 0.5f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		// gl esperando eventos
 		glfwPollEvents();
 
-		// gl esperando botao para fechar a janela
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 			glfwSetWindowShouldClose(window, GLFW_TRUE);
 		}
 
-		// enquanto ainda estiver desenhando
 		if (draw) {
-			// vai dando bind no vao
-			glBindVertexArray(vao);
-			// e desenhando os triangulos, porem enviando para o vetor de pontos finais
 
+			glBindVertexArray(vao);
+
+			// Desenha os triângulos, enviando para o vetor de pontos finais
 			glDrawArrays(GL_TRIANGLES, 0, pontosFinaisFloat->size());
 		}
 		// gera o desenho na tela
@@ -132,7 +105,7 @@ int main() {
 }
 
 // convertendo de vec3 para GLfloat
-std::vector<GLfloat>* convertToFloat(std::vector<glm::vec3*>* points) {
+std::vector<GLfloat>* ConvertToFloat(std::vector<glm::vec3*>* points) {
 
 std:vector<GLfloat>* temp = new std::vector<GLfloat>();
 
@@ -144,12 +117,12 @@ std:vector<GLfloat>* temp = new std::vector<GLfloat>();
 	return temp;
 }
 
-// convertendo coordenadas da tela para coordenadas graficas, x e y para valores entre -1 0 1
-void convertCoordinates(double& x, double& y) {
+// Coordenadas da tela para coordenadas graficas, x e y para valores entre -1 0 1
+void ConvertCoordinates(double& x, double& y) {
 
 	// se x for maior que a metade da tela da esquerda
 	// ou seja clique na direita
-	// resultando em valores entre 0 e 1
+	// resulta em valores entre 0 e 1
 	if (x > (WIDTH / 2)) {
 		x = x - (WIDTH / 2);
 		x = x / (WIDTH / 2);
@@ -165,7 +138,7 @@ void convertCoordinates(double& x, double& y) {
 
 	// se y for maior que a metade de baixo da tela
 	// ou seja clique na parte de baixo
-	// resultando em valores entre 0 e -1
+	// resulta em valores entre 0 e -1
 	if (y > (HEIGHT / 2)) {
 		y = y - (HEIGHT / 2);
 		y = y / (HEIGHT / 2);
@@ -183,7 +156,7 @@ void convertCoordinates(double& x, double& y) {
 }
 
 // pega o quadrante que esta
-int getZone(float x, float y) {
+int GetZone(float x, float y) {
 
 	if (x > 0.0 && y > 0.0) {
 		return 1;
@@ -199,16 +172,14 @@ int getZone(float x, float y) {
 	}
 }
 
-// pegando os cliques da tela
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
 
-	// se clicar no botao da esquerda do mouse
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 		double xpos, ypos;
 		// pega posicao
 		glfwGetCursorPos(window, &xpos, &ypos);
-		// converte as coordenadas
-		convertCoordinates(xpos, ypos);
+
+		ConvertCoordinates(xpos, ypos);
 
 		// gera um novo vec3 com o ponto para a curva
 		glm::vec3* point = new glm::vec3(xpos, ypos, 0.0);
@@ -222,13 +193,13 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
 		SetCoordinatesByZone(xpos, ypos);
 	}
-	// quando clicar no botao direito, terminar e finalizar a curva
+
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
 		draw = true;
 
 		curvaOriginal = gerarCurva(pontosSelecionados);
-		curvaExterna = gerarCurvaExternaInterna(curvaOriginal, true);
-		curvaInterna = gerarCurvaExternaInterna(curvaOriginal, false);
+		curvaExterna = GerarCurva(curvaOriginal, true);
+		curvaInterna = GerarCurva(curvaOriginal, false);
 
 		// tamanho do array dividido por 2 - porque a metade desses valores e cor branca
 
@@ -240,7 +211,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
 		pontosFinais = gerarCurvaFinal(curvaInterna, curvaExterna);
 
-		pontosFinaisFloat = convertToFloat(pontosFinais);
+		pontosFinaisFloat = ConvertToFloat(pontosFinais);
 
 		glBindVertexArray(vao);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -255,7 +226,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 void SetCoordinatesByZone(double& xpos, double& ypos)
 {
 	// arrendodamento de curva, aumentando um pouco a curva
-	int zone = getZone(xpos, ypos);
+	int zone = GetZone(xpos, ypos);
 	if (zone == 1) {
 		xpos += 0.5;
 		ypos += 0.5;
@@ -274,11 +245,8 @@ void SetCoordinatesByZone(double& xpos, double& ypos)
 	}
 }
 
-// gera a curva (pontos) de um ponto ao outro
-
 vector<glm::vec3*>* gerarCurva(vector<glm::vec3*>* points) {
 
-	// cria o txt
 	TXTWriter TXTWriter;
 	TXTWriter.createTXTFile();
 
@@ -296,47 +264,38 @@ vector<glm::vec3*>* gerarCurva(vector<glm::vec3*>* points) {
 	temp->push_back(points->at(2));
 
 	CalcularBSpline(temp, curvaCalculada, TXTWriter);
-	// termina o arquivo txt
+
 	TXTWriter.closeTXTFile();
 	cout << "Curva gerada com sucesso!" << endl;
-	// retorna um vec3 com os pontos da curva
 
 	return curvaCalculada;
 }
 
 void CalcularBSpline(std::vector<glm::vec3*>* temp, std::vector<glm::vec3*>* curvaCalculada, TXTWriter& TXTWriter)
 {
-	// itera entre os pontos coletados
-	for (int i = 0; i < (temp->size() - 3); i++) { // sem utilizar o ultimo ponto
+
+	for (int i = 0; i < (temp->size() - 3); i++) {
 
 												   // itera entre 99 variacoes para a distancia entre cada ponto
 		for (int j = 0; j < 100; ++j) {
 
-			// todos estess valores vao dar dizima periodica
 			float t = static_cast<float>(j) / 99.0;
 
-			// calculando bspline para x
 			GLfloat x = (((-1 * pow(t, 3) + 3 * pow(t, 2) - 3 * t + 1) * temp->at(i)->x +
 				(3 * pow(t, 3) - 6 * pow(t, 2) + 0 * t + 4) * temp->at(i + 1)->x +
 				(-3 * pow(t, 3) + 3 * pow(t, 2) + 3 * t + 1) * temp->at(i + 2)->x +
 				(1 * pow(t, 3) + 0 * pow(t, 2) + 0 * t + 0) * temp->at(i + 3)->x) / 6);
 
-			// calculando bspline para y
 			GLfloat y = (((-1 * pow(t, 3) + 3 * pow(t, 2) - 3 * t + 1) * temp->at(i)->y +
 				(3 * pow(t, 3) - 6 * pow(t, 2) + 0 * t + 4) * temp->at(i + 1)->y +
 				(-3 * pow(t, 3) + 3 * pow(t, 2) + 3 * t + 1) * temp->at(i + 2)->y +
 				(1 * pow(t, 3) + 0 * pow(t, 2) + 0 * t + 0) * temp->at(i + 3)->y) / 6);
 
-			// depois da conversao de x e y coloca em uma vec3
 			glm::vec3* point = new glm::vec3(x, y, 0.0);
-			// adiciona o ponto no vetor de curvas calculadas
 
 			curvaCalculada->push_back(point);
 
-			// adiciona o ponto no txt
 			TXTWriter.addPoint(point->x, point->y, point->z);
-
-			// adiciona cor branca para a curva
 
 			curvaCalculada->push_back(new glm::vec3(0.0, 0.1, 1.0));
 
@@ -344,7 +303,7 @@ void CalcularBSpline(std::vector<glm::vec3*>* temp, std::vector<glm::vec3*>* cur
 	}
 }
 
-vector<glm::vec3*>* gerarCurvaExternaInterna(vector<glm::vec3*>* points, bool external) {
+vector<glm::vec3*>* GerarCurva(vector<glm::vec3*>* points, bool external) {
 
 	// recebe os pontos da curva original do meio
 
@@ -374,7 +333,6 @@ vector<glm::vec3*>* gerarCurvaExternaInterna(vector<glm::vec3*>* points, bool ex
 		// arco tangente
 		GLfloat angle = glm::atan(dy, dx);
 
-		// verifica se gera a curva interna ou a externa
 		if (external) {
 			angle += HALF_PI;
 		}
@@ -385,8 +343,6 @@ vector<glm::vec3*>* gerarCurvaExternaInterna(vector<glm::vec3*>* points, bool ex
 		// 0.09 -> tamanho da curva, fator de escala
 		GLfloat offsetX = glm::cos(angle) * 0.09;
 		GLfloat offsetY = glm::sin(angle) * 0.09;
-
-		// pronto da curva principal + escala
 
 		glm::vec3* pontosGerados = new glm::vec3(a->x + offsetX, a->y + offsetY, 0.0);
 

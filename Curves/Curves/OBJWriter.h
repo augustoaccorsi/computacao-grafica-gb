@@ -59,11 +59,11 @@ public:
 	}
 	
 	void saveTextureValuesToOBJ() {
-		//save texture points on obj
+
 		OBJFile.open("pista.obj", ios::app);
 		OBJFile << endl;
-		OBJFile << "vt " << 1.0 << " " << 1.0 << endl; //-1.0 is to treat the 1 - v on the objreader
-		OBJFile << "vt " << 1.0 << " " << 0.0 << endl; //+1.0 is to treat the 1 - v on the objreader
+		OBJFile << "vt " << 1.0 << " " << 1.0 << endl;
+		OBJFile << "vt " << 1.0 << " " << 0.0 << endl;
 		OBJFile << "vt " << 0.0 << " " << 1.0 << endl;
 		OBJFile << "vt " << 0.0 << " " << 0.0 << endl;
 		OBJFile << endl;
